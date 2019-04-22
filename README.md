@@ -7,11 +7,11 @@ Bandwidth Reservation is a very important requirement for Deterministic Networks
 Different components of BwResv queue disc are
 
 ```
-Flow Table
-Active flows list for detnet flows
-Active flows list for other flows
-Priority for detnet flows to accept packets upto their bandwidth reservation limit
-Calculate remaining bandwidth after serving all detnet flows and then serve other flows fairly.
+1) Flow Table
+2) Active flows list for detnet flows
+3) Active flows list for other flows
+4) Priority for detnet flows to accept packets upto their bandwidth reservation limit
+5) Bandwidth reservation and allocation algorithm
 
 ```
 
@@ -34,6 +34,13 @@ Calculate remaining bandwidth after serving all detnet flows and then serve othe
 * It's queue is checked against a `THRESHOLD`
 * Packet is enqued in only if flow queue is less that `THRESHOLD` . If flowqueue is zero, its is added to flow type activelist.
 * If the packet is accepted, its queue is incremented with its `PktSize`
+
+## Packet Replication
+Along with bandwidth reservation, packet replication is very important to ensure the reliability of packet delivery in deterministic network.
+
+```
+Work in progress...
+```
 
 ## NS-3 Experiment
 

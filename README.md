@@ -35,6 +35,13 @@ Different components of BwResv queue disc are
 * Packet is enqued in only if flow queue is less that `THRESHOLD` . If flowqueue is zero, its is added to flow type activelist.
 * If the packet is accepted, its queue is incremented with its `PktSize`
 
+## Packet Replication
+Along with bandwidth reservation, packet replication is very important to ensure the reliability of packet delivery in deterministic network.
+
+```
+Work in progress...
+```
+
 ## NS-3 Experiment
 
 ### OnOff Application

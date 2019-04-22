@@ -23,6 +23,14 @@
 #include "ns3/object-factory.h"
 #include "ns3/drop-tail-queue.h"
 
+#include "ns3/enum.h"
+#include "ns3/simulator.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("FifoQueueDisc");
@@ -83,6 +91,10 @@ Ptr<QueueDiscItem>
 FifoQueueDisc::DoDequeue (void)
 {
   NS_LOG_FUNCTION (this);
+  std::ofstream outfilepkt;
+
+  outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+  outfilepkt<< GetInternalQueue (0)->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() <<std::endl;
 
   Ptr<QueueDiscItem> item = GetInternalQueue (0)->Dequeue ();
 

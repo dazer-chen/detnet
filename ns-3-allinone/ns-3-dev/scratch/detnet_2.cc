@@ -21,9 +21,17 @@
 #include "ns3/traffic-control-module.h"
 #include "ns3/flow-monitor-module.h"
 
-
+#include <unistd.h> //for sleep
 
 using namespace ns3;
+
+#define QU
+
+//#define REDQU
+//#define FIFOQU
+#define DETNETQU
+
+#define N_FLOWS 12
 
 NS_LOG_COMPONENT_DEFINE ("detnet");
 FlowMonitorHelper flowHelper;
@@ -32,11 +40,25 @@ Ptr<FlowMonitor> flowmon;
 inline void Flow_Monitor(Ptr<FlowMonitor> flowMonitor,FlowMonitorHelper flowHelper){
 	flowMonitor = flowHelper.InstallAll();
 }
+
+void K(){
+	flowmon->ClearFlowStats();
+}
 void F(){
+	std::ofstream outfilerx;
+	outfilerx.open("/home/vamsi/src/detnet/scripts/results/rx.dat", std::ios_base::app);
+	std::ofstream outfilelat;
+	outfilelat.open("/home/vamsi/src/detnet/scripts/results/delay.dat", std::ios_base::app);
+	std::ofstream outfiletx;
+	outfiletx.open("/home/vamsi/src/detnet/scripts/results/tx.dat", std::ios_base::app);
+
 
 	Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowHelper.GetClassifier ());
 	std::map<FlowId, FlowMonitor::FlowStats> stats = flowmon->GetFlowStats ();
-
+	uint32_t n=0;
+	double total = 0;
+	double total_delay=0;
+	uint32_t total_packets=0;
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
 	  {
 		//  Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
@@ -44,11 +66,27 @@ void F(){
 	        //std::cout << "Flow " << i->first  << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\t";
 	        //std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
 	        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
-	    	  std::cout << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds())/(1024)  << " kbps\t";
+	        total+=i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000);
+	    	  outfilerx << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000)  << " kbps\t";
+	    	  outfilelat << "meandelay: " << (i->second.delaySum.GetSeconds() / i->second.rxPackets) << " sec\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
+	    	  total_delay+=i->second.delaySum.GetSeconds();
+	    	  total_packets+=i->second.rxPackets;
 	    	  //std::cout << "  ThroughputTx: " << i->second.txBytes * 8.0 / (i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds())/1000000  << " mbps\t";
 	    }
+	    n++;
 	   }
-	std::cout << std::endl;
+	while(n<N_FLOWS){
+		outfilerx << "  ThroughputRx: " << "0"  << " kbps\t";
+		outfilelat << "meandelay: " << 0 << " sec\t";
+	   	n++;
+	}
+
+	outfilerx << "  ThroughputRx: " << total  << " kbps\t";
+	outfilelat << "meanTotaldelay: " << total_delay/total_packets << " sec\t";
+	outfilerx << std::endl;
+	outfilelat << std::endl;
+	n=0;
+	total=0;
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
 		  {
 			//  Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
@@ -57,10 +95,19 @@ void F(){
 		        //std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
 		        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
 		    	  //std::cout << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds())/1000000  << " mbps\t";
-		    	  std::cout << "  ThroughputTx: " << i->second.txBytes * 8.0 / (i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds())/(1024)  << " kbps\t";
+		    	total+=i->second.txBytes * 8.0 /(Seconds(0.8).GetSeconds())/(1000);
+		    	  outfiletx << "  ThroughputTx: " << i->second.txBytes * 8.0 /(Seconds(0.8).GetSeconds())/(1000)  << " kbps\t";
 		    }
+		    n++;
 		   }
-	std::cout << std::endl;
+	while(n<N_FLOWS){
+	   	outfiletx << "  ThroughputTx: " << "0"  << " kbps\t";
+	   	n++;
+	}
+	outfiletx << "  ThroughputTx: " << total  << " kbps\t";
+	outfiletx << std::endl;
+	//sleep(2); 
+ 
 	//flowmon->ClearFlowStats(); // @suppress("Invalid arguments")
 }
 int
@@ -81,9 +128,14 @@ main (int argc, char *argv[])
 	std::string bandwidth = "10Mbps";
 	std::string delay = "5ms";
 	std::string queueDiscType = "BwResv";
-//	uint32_t queueDiscSize = 1000;
-//	uint32_t netdevicesQueueSize = 50;
-//	bool bql = false;
+
+	#ifdef REDQU
+	//uint32_t meanPktSize = 500;
+	//uint32_t queueDiscSize = 1000;
+	bool bql = false;
+	#endif
+	//uint32_t netdevicesQueueSize = 50;
+	//bool bql = false;
 
 	std::string flowsDatarate = "20Mbps";
 //	uint32_t flowsPacketsSize = 1000;
@@ -139,12 +191,12 @@ main (int argc, char *argv[])
 
 	//Type-0
 	PointToPointHelper type0;
-	type0.SetDeviceAttribute("DataRate",StringValue("21Mbps"));
+	type0.SetDeviceAttribute("DataRate",StringValue("30Mbps"));
 	type0.SetChannelAttribute("Delay",StringValue("2ms"));
 
 	//type-1
 	PointToPointHelper type1;
-	type1.SetDeviceAttribute("DataRate",StringValue("12Mbps"));
+	type1.SetDeviceAttribute("DataRate",StringValue("10Mbps"));
 	type1.SetChannelAttribute("Delay",StringValue("2ms"));
 
 	//type-2
@@ -153,24 +205,49 @@ main (int argc, char *argv[])
 	type2.SetChannelAttribute("Delay",StringValue("2ms"));
 
 	TrafficControlHelper tchBottleneck;
-/*	tchBottleneck.SetRootQueueDisc ("ns3::RedQueueDisc");
-	Config::SetDefault ("ns3::RedQueueDisc::ARED", BooleanValue (true));
-	Config::SetDefault ("ns3::RedQueueDisc::MaxSize",QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, queueDiscSize)));
-	if (bql){
+	#ifdef REDQU
+	// NS_LOG_INFO ("Set RED params");
+ //  	Config::SetDefault ("ns3::RedQueueDisc::MaxSize", StringValue ("1000p"));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::MeanPktSize", UintegerValue (meanPktSize));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::Wait", BooleanValue (true));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::Gentle", BooleanValue (true));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::QW", DoubleValue (0.002));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::MinTh", DoubleValue (5));
+ //  	Config::SetDefault ("ns3::RedQueueDisc::MaxTh", DoubleValue (15));
+	tchBottleneck.SetRootQueueDisc ("ns3::RedQueueDisc");
+	//Config::SetDefault ("ns3::RedQueueDisc::ARED", BooleanValue (true));
+	//Config::SetDefault ("ns3::RedQueueDisc::MaxSize",QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, queueDiscSize)));
+		if (bql){
 		tchBottleneck.SetQueueLimits ("ns3::DynamicQueueLimits");
 	}
-*/
-	tchBottleneck.SetRootQueueDisc ("ns3::BwResvQueueDisc","RateOther",DataRateValue(DataRate("1000kbps")),"RateDetnet",DataRateValue(DataRate("12000kbps")));
+	#endif
+
+	#ifdef FIFOQU
+	tchBottleneck.SetRootQueueDisc ("ns3::FifoQueueDisc");
+	#endif
+
+	#ifdef DETNETQU
+	tchBottleneck.SetRootQueueDisc ("ns3::BwResvQueueDisc","RateOther",DataRateValue(DataRate("1000kbps")),"RateDetnet",DataRateValue(DataRate("10000kbps")));
+	#endif
+
 	// Net Devices
 	NetDeviceContainer d0d2 = type0.Install(n0n2);
 	NetDeviceContainer d1d2 = type0.Install(n1n2);
 	NetDeviceContainer d4d3 = type0.Install(n4n3);
 	NetDeviceContainer d5d3 = type0.Install(n5n3);
-	NetDeviceContainer d2d3 = type1.Install(n2n3);tchBottleneck.Install(d2d3);
-	NetDeviceContainer d2d6 = type1.Install(n2n6);tchBottleneck.Install(d2d6);
-	NetDeviceContainer d2d7 = type1.Install(n2n7);tchBottleneck.Install(d2d7);
-	NetDeviceContainer d6d3 = type1.Install(n6n3);tchBottleneck.Install(d6d3);
-	NetDeviceContainer d7d3 = type1.Install(n7n3);tchBottleneck.Install(d7d3);
+	NetDeviceContainer d2d3 = type1.Install(n2n3);// Routerlink tchBottleneck.Install(d2d3);
+	NetDeviceContainer d2d6 = type1.Install(n2n6);// Routerlink tchBottleneck.Install(d2d6);
+	NetDeviceContainer d2d7 = type1.Install(n2n7);// Routerlink tchBottleneck.Install(d2d7);
+	NetDeviceContainer d6d3 = type1.Install(n6n3);// Routerlink tchBottleneck.Install(d6d3);
+	NetDeviceContainer d7d3 = type1.Install(n7n3);// Routerlink tchBottleneck.Install(d7d3);
+
+	#ifdef QU
+	tchBottleneck.Install(d2d3);
+	// tchBottleneck.Install(d2d6);
+	// tchBottleneck.Install(d2d7);
+	// tchBottleneck.Install(d6d3);
+	// tchBottleneck.Install(d7d3);
+	#endif
 
 	// IP addressing
 
@@ -217,93 +294,98 @@ main (int argc, char *argv[])
 	// 210 bytes at a rate of 448 Kb/s
 	NS_LOG_INFO ("Create Applications.");
 
+
+	type0.EnablePcapAll("detnet_2_0");
+	type1.EnablePcapAll("detnet_2_1");
+	
+
 ////////////////////////
 	   uint16_t port = 9;   // Discard port (RFC 863)
 	   OnOffHelper onoff ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   OnOffHelper onoff1 ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app0
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0100Kbps D")); //12 bytes reserved
 	   ApplicationContainer apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.1));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (2));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app1
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0200Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.2));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (4));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app2
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0300Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.3));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (5));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app3
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0400Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.4));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (6));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app4
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0500Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.5));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (7));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app5
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0600Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.6));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (8));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app6
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0700Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.7));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (9));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app7
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0800Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.8));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (10));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app8
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("0900Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (1.9));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (11));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app9
 	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (2.0));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (12));
+	   apps.Stop (Seconds (20.0));
 
 
 	   onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
-	   onoff1.SetConstantRate (DataRate ("5000Kbps")); //appOther
+	   onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
 	   onoff1.SetAttribute("Buffer",StringValue("1000Kbps O")); //12 bytes reserved
 	   apps = onoff1.Install (c.Get (0));
-	   apps.Start (Seconds (2.1));
-	   apps.Stop (Seconds (4.0));
+	   apps.Start (Seconds (1));
+	   apps.Stop (Seconds (20.0));
 
 	   onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
-	   onoff1.SetConstantRate (DataRate ("5000Kbps")); //appOther
+	   onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
 	   onoff1.SetAttribute("Buffer",StringValue("1000Kbps O")); //12 bytes reserved
 	   apps = onoff1.Install (c.Get (0));
-	   apps.Start (Seconds (2.2));
-	   apps.Stop (Seconds (10.0));
+	   apps.Start (Seconds (3));
+	   apps.Stop (Seconds (20.0));
 
 	   // Create a packet sink to receive these packets
 
@@ -311,13 +393,13 @@ main (int argc, char *argv[])
 	                          Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
 	   apps = sink.Install (c.Get (4));
 	   apps.Start (Seconds (1.0));
-	   apps.Stop (Seconds (10.0));
+	   apps.Stop (Seconds (20.0));
 
 	   PacketSinkHelper sink1 ("ns3::UdpSocketFactory",
 	   	                          Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
 	   apps = sink1.Install (c.Get (5));
 	   apps.Start (Seconds (1.0));
-	   apps.Stop (Seconds (10.0));
+	   apps.Stop (Seconds (20.0));
 //////////////////////////////
 
 
@@ -361,18 +443,43 @@ main (int argc, char *argv[])
 	   //Ptr<FlowMonitor> flowmon;
 
 	   flowmon = flowHelper.InstallAll();
+
 	   //flowmon->Start(Seconds(4));
-	   //Simulator::Schedule(Seconds (4),&F);
-	   Simulator::Schedule(Seconds (5),&F);
+	   Simulator::Schedule(Seconds (1.1),&K);
+	   Simulator::Schedule(Seconds (1.9),&F);
+	   Simulator::Schedule(Seconds (2.1),&K);
+	   Simulator::Schedule(Seconds (2.9),&F);
+	   Simulator::Schedule(Seconds (3.1),&K);
+	   Simulator::Schedule(Seconds (3.9),&F);
+	   Simulator::Schedule(Seconds (4.1),&K);
+	   Simulator::Schedule(Seconds (4.9),&F);
+	   Simulator::Schedule(Seconds (5.1),&K);
+	   Simulator::Schedule(Seconds (5.9),&F);
+	   Simulator::Schedule(Seconds (6.1),&K);
+	   Simulator::Schedule(Seconds (6.9),&F);
+	   Simulator::Schedule(Seconds (7.1),&K);
+	   Simulator::Schedule(Seconds (7.9),&F);
+	   Simulator::Schedule(Seconds (8.1),&K);
+	   Simulator::Schedule(Seconds (8.9),&F);
+	   Simulator::Schedule(Seconds (9.1),&K);
+	   Simulator::Schedule(Seconds (9.9),&F);
+	   Simulator::Schedule(Seconds (10.1),&K);
+	   Simulator::Schedule(Seconds (10.9),&F);
+	   Simulator::Schedule(Seconds (11.1),&K);
+	   Simulator::Schedule(Seconds (11.9),&F);
+	   Simulator::Schedule(Seconds (12.1),&K);
+	   Simulator::Schedule(Seconds (12.9),&F);
+	   Simulator::Schedule(Seconds (19.1),&K);
+	   Simulator::Schedule(Seconds (19.9),&F);
 
 //	   for (uint8_t i=2;i<11;i++){
 //		   Simulator::Schedule(Seconds (i),&F);
 //	   }
 
 
-  Simulator::Stop (Seconds (7));
+  Simulator::Stop (Seconds (20));
   Simulator::Run ();
-  //flowmon->SerializeToXmlFile(queueDiscType + "-flowMonitor.xml", true, true);
+  flowmon->SerializeToXmlFile(queueDiscType + "-flowMonitor.xml", true, true);
 //  for (uint8_t i=0;i<11;i++){
 //	  flowmon[i]->SerializeToXmlFile(queueDiscType + "-flowMonitor_" + std::to_string(i) + ".xml", true, true);
 //  }

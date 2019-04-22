@@ -24,6 +24,11 @@
 #include "ns3/udp-header.h"
 #include "ns3/ipv4-queue-disc-item.h"
 
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
 //#include "ns3/ipv4-queue-disc-item.h"
 
 
@@ -245,7 +250,8 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   m_timeCheckPoint=now;
   uint32_t hash = item->Hash ();
   flow_table_t *flow;
-  uint32_t pktsize = (item->GetSize ())*8;
+  uint32_t pktsize = (item->GetSize ()+2)*8;
+  //std::cout << pktsize << std::endl;
 
   flow = ClassifyFlow(item,hash,pktsize);
 
@@ -278,8 +284,8 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   if(credit > detnet_consumption && otheractiveflows.size() > 0){
 	  flow_table_t *flow;
 	  otheractiveflow_t o_flow;
-	  uint32_t rem_credit=credit-detnet_consumption;
-	  uint32_t served;
+	  float rem_credit=credit-detnet_consumption;
+	  float served;
 	  uint32_t old_nbl=otheractiveflows.size()+1;
 	  //std::cout << otheractiveflows.size()<<std::endl;
 	  while(old_nbl>otheractiveflows.size() && otheractiveflows.size()>0){
@@ -302,11 +308,13 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 	  }
   }
 
+
+
 // Packet Accepted or Dropped
   uint32_t t;
-  if(flow->type=="D")
-	  t=flow->threshold_flow;
-  else
+ // if(flow->type=="D")
+	//   t=flow->threshold_flow;
+ // else
 	  t=threshold;
   if(flow->vqueue <=t){
 	  if(flow->vqueue == 0){
@@ -328,23 +336,24 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 	  //flow->last_arrival=now;
 	  //std::cout << flow.vqueue <<  std::endl;
 	  flow->last_arrival=Simulator::Now ();
-//	  if(flow->type=="D")
-//	  flow->threshold_flow=flow->threshold_flow*1.2;
-//	  else
-//		  threshold=threshold*1.2;
+	  // if(flow->type=="D")
+	  // flow->threshold_flow=flow->threshold_flow*1.1;
+	  // else
+		 //  threshold=threshold*1.1;
 
   }
   else{
 	  DropBeforeEnqueue (item, FORCED_DROP);
-//	  if(flow->type=="D")
-//	  flow->threshold_flow=flow->threshold_flow*0.5;
-//	  else
-//		  threshold=threshold*0.5;
+	  // if(flow->type=="D")
+	  // flow->threshold_flow=flow->threshold_flow*0.5;
+	  // else
+		 //  threshold=threshold*0.5;
 	  return false;
   }
 
   bool retval = GetQueueDiscClass (0)->GetQueueDisc ()->Enqueue (item);
-
+  
+  
   // If Queue::Enqueue fails, QueueDisc::Drop is called by the child queue
   // disc because QueueDisc::AddQueueDiscClass sets the drop callback
 
@@ -363,7 +372,13 @@ BwResvQueueDisc::DoDequeue (void)
 //	  return 0;
 //  else{
 
+    std::ofstream outfilepkt;
+
+
+
   	  Ptr<QueueDiscItem> item = GetQueueDiscClass (0)->GetQueueDisc ()->Dequeue ();
+  	 outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+  	  outfilepkt<< GetQueueDiscClass(0)->GetQueueDisc()->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() <<std::endl;
 	  //if(item!= NULL )
 	  return item;
 	  //else return 0;

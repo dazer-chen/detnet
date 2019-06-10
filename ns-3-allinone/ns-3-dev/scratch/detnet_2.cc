@@ -59,6 +59,8 @@ void F(){
 	double total = 0;
 	double total_delay=0;
 	uint32_t total_packets=0;
+	double total_jitter=0;
+
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
 	  {
 		//  Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
@@ -68,8 +70,9 @@ void F(){
 	        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
 	        total+=i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000);
 	    	  outfilerx << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000)  << " kbps\t";
-	    	  outfilelat << "meandelay: " << (i->second.delaySum.GetSeconds() / i->second.rxPackets) << " sec\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
+	    	  outfilelat << "meandelay: " << (i->second.delaySum.GetSeconds() / i->second.rxPackets) << " sec\t" << "meanJitter: " << (i->second.jitterSum.GetSeconds()/i->second.rxPackets) << " sec\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
 	    	  total_delay+=i->second.delaySum.GetSeconds();
+	    	  total_jitter+=i->second.jitterSum.GetSeconds();
 	    	  total_packets+=i->second.rxPackets;
 	    	  //std::cout << "  ThroughputTx: " << i->second.txBytes * 8.0 / (i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds())/1000000  << " mbps\t";
 	    }
@@ -77,12 +80,12 @@ void F(){
 	   }
 	while(n<N_FLOWS){
 		outfilerx << "  ThroughputRx: " << "0"  << " kbps\t";
-		outfilelat << "meandelay: " << 0 << " sec\t";
+		outfilelat << "meandelay: " << 0 << " sec\t" << "meanJitter: " << 0 << " sec\t";
 	   	n++;
 	}
 
 	outfilerx << "  ThroughputRx: " << total  << " kbps\t";
-	outfilelat << "meanTotaldelay: " << total_delay/total_packets << " sec\t";
+	outfilelat << "meanTotaldelay: " << total_delay/total_packets << " sec\t"<< "meanTotalJitter: "<< total_jitter/total_packets << " sec\t";
 	outfilerx << std::endl;
 	outfilelat << std::endl;
 	n=0;
@@ -303,6 +306,19 @@ main (int argc, char *argv[])
 	   uint16_t port = 9;   // Discard port (RFC 863)
 	   OnOffHelper onoff ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   OnOffHelper onoff1 ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
+
+	   /*
+	    * ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1000]"));
+  m_factory.Set ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  m_factory.Set ("DataRate", DataRateValue (dataRate));
+  m_factory.Set ("PacketSize", UintegerValue (packetSize));
+	    */
+//
+//	   onoff.SetAttribute("PacketSize",UintegerValue(1000));
+//	   onoff.SetAttribute("DataRate", DataRateValue("1Mbps"));
+//	   onoff.SetAttribute("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+//	   onoff.SetAttribute("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.010666667]"));
+
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app0
 	   onoff.SetAttribute("Buffer",StringValue("0100Kbps D")); //12 bytes reserved
 	   ApplicationContainer apps = onoff.Install (c.Get (0));

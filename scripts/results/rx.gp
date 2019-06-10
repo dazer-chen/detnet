@@ -28,8 +28,8 @@
 
 #Happy gnuplotting
 
-
 set out "rx_detnet.pdf"
+#set out "rx_fifo.pdf"
 set term pdf font "Times,8"
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1300,1000
 
@@ -37,7 +37,7 @@ set pointsize 1.25
 
 set key top right
 #set ylabel "Per flow rate [pps]"
-set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement)\n and the remaining availble bandwidth is fairly shared by other flows."
+#set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement)\n and the remaining availble bandwidth is fairly shared by other flows."
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
 
 set xlabel "Time (seconds)"
@@ -60,7 +60,7 @@ set ylabel "Bitrate Mbps"
 #print("Total Throughput")
 #print(total)
 #f(x)=total
-set yrange [0:11]
+set yrange [0:13]
 set ytics 1
 
 plot \

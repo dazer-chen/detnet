@@ -28,8 +28,8 @@
 
 #Happy gnuplotting
 
-
 set out "delay_detnet.pdf"
+#set out "delay_fifo.pdf"
 set term pdf font "Times,8"
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1200,1000
 
@@ -37,7 +37,7 @@ set pointsize 1.25
 
 set key top right
 #set ylabel "Per flow rate [pps]"
-set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
+#set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
 set xlabel "Time (seconds)"
 set xtics 1
@@ -66,18 +66,18 @@ set yrange [0:0.5]
 
 plot \
 '< cat delay.dat | tail -n 13'    u ($0):($2)      t 'Latency Other-1'    axes x1y1 with steps lc rgb "green" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($8)      t 'Latency Other-2'    axes x1y1 with steps lc rgb "orange" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($5)      t 'Latency Detnet-1'   axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($11)     t 'Latency Detnet-2'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($14)     t 'Latency Detnet-3'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($17)     t 'Latency Detnet-4'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($20)     t 'Latency Detnet-5'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($23)     t 'Latency Detnet-6'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($26)     t 'Latency Detnet-7'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($29)     t 'Latency Detnet-8'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($32)     t 'Latency Detnet-9'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($35)     t 'Latency Detnet-10' axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($38)     t 'Total Mean Latency' axes x1y1 with steps lc rgb "red" lw 2
+'< cat delay.dat | tail -n 13'    u ($0):($14)      t 'Latency Other-2'    axes x1y1 with steps lc rgb "orange" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($8)      t 'Latency Detnet-1'   axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($20)     t 'Latency Detnet-2'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($26)     t 'Latency Detnet-3'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($32)     t 'Latency Detnet-4'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($38)     t 'Latency Detnet-5'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($44)     t 'Latency Detnet-6'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($50)     t 'Latency Detnet-7'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($56)     t 'Latency Detnet-8'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($62)     t 'Latency Detnet-9'  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($68)     t 'Latency Detnet-10' axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay.dat | tail -n 13'    u ($0):($74)     t 'Total Mean Latency' axes x1y1 with steps lc rgb "red" lw 2
 #pause 0.5
 #reread
 

@@ -28,19 +28,22 @@
 
 #Happy gnuplotting
 
-
 set out "pkt_detnet.pdf"
+#set out "pkt_fifo.pdf"
 set term pdf font "Times,8"
+
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1200,1000
 
 set pointsize 1.25
-
 set key top right
+
 #set ylabel "Per flow rate [pps]"
-set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
+#set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
+
 set xlabel "Time (seconds)"
 set xtics 1
+
 #set xrange [0:20]
 #set ytics 0.1
 #set boxwidth 0.5
@@ -49,7 +52,9 @@ set xtics 1
 #set y2tics
 #set yrange [0:5]
 #set y2range [0:6000]
+
 set ylabel "Number of packets in the queue"
+
 #set y2label "Flow Weight"
 #set format y "%.t^.10^%T"
 #set ytics 200000
@@ -62,7 +67,9 @@ set ylabel "Number of packets in the queue"
 #f(x)=total
 #set yrange [0:1]
 #set ytics 1
-set yrange [0:5]
+
+#set yrange [0:5]
+set yrange [0:1200]
 
 plot \
 '< cat pkt.dat' u ($2):($1) t 'packets' axes x1y1 with lp

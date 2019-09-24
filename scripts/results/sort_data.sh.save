@@ -1,0 +1,6 @@
+for I in stresv bwresv;do
+	for J in low mid high;do
+		cat rx_"$I"_"$J".dat | sort -rnk4 > rx_"$I"_"$J"_sort.dat
+		for A in 1 2 3 4 5;do grep "$(cat rx_"$I"_"$J".dat | sort -rnk4 | awk '{print $1" "$2}' | head -n"$A" | tail -n1)" tx_"$I"_"$J".dat >> tx_"$I"_"$J"_sort.dat;done
+	done
+done

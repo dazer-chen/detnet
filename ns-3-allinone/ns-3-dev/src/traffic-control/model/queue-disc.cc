@@ -653,6 +653,7 @@ QueueDisc::AddQueueDiscClass (Ptr<QueueDiscClass> qdClass)
 Ptr<QueueDiscClass>
 QueueDisc::GetQueueDiscClass (std::size_t i) const
 {
+//	std::cout<< i<< "\t" << m_classes.size()<<std::endl;
   NS_ASSERT (i < m_classes.size ());
   return m_classes[i];
 }

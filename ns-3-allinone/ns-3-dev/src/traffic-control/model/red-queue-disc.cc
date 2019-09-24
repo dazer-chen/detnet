@@ -65,6 +65,13 @@
 #include "red-queue-disc.h"
 #include "ns3/drop-tail-queue.h"
 
+#define PACKETSRED 1
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
 namespace ns3 {
 
 NS_LOG_COMPONENT_DEFINE ("RedQueueDisc");
@@ -342,6 +349,7 @@ RedQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   NS_LOG_FUNCTION (this << item);
 
   uint32_t nQueued = GetInternalQueue (0)->GetCurrentSize ().GetValue ();
+
 
   // simulate number of packets arrival during idle period
   uint32_t m = 0;
@@ -811,6 +819,13 @@ Ptr<QueueDiscItem>
 RedQueueDisc::DoDequeue (void)
 {
   NS_LOG_FUNCTION (this);
+
+  if (PACKETSRED==1){
+       std::ofstream outfilepkt;
+       outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+       outfilepkt<< GetInternalQueue (0)->GetNPackets()<< "\t" << Simulator::Now().GetSeconds()  <<std::endl;
+      }
+
 
   if (GetInternalQueue (0)->IsEmpty ())
     {

@@ -30,7 +30,7 @@
 
 set out "loss.pdf"
 #set out "delay_fifo.pdf"
-set term pdf font "Times,8"
+set term pdf font "Times,12"
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1200,1000
 
 set pointsize 1.25
@@ -41,10 +41,11 @@ set key top right
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
 set xlabel "Flow ID"
 set xtics 1
-set xrange [0:12]
+set xrange [1:6]
 #set ytics 0.1
 set boxwidth 0.25
-set style fill solid
+set style fill pattern
+#set style fill solid
 #set ytics nomirror
 #set y2tics
 #set yrange [0:5]
@@ -65,8 +66,8 @@ set ylabel "Loss Ratio"
 set yrange [0:1]
 
 plot \
-'< cat loss_ratio.dat'    u ($0+0.375):($2)      t 'BwResv Queue'    axes x1y1 with boxes lc rgb "green",\
-'< cat loss_ratio.dat'	 u ($0+0.125):($4)      t 'FIFO Queue'    axes x1y1 with boxes lc rgb "red"
+'< cat packets_detnet.dat'    u ($0+1.375):($2)      t 'BwResv Queue'    axes x1y1 with boxes fill pattern 1 lc rgb "green",\
+'< cat packets_fifo.dat'	 u ($0+1.125):($2)      t 'FIFO Queue'    axes x1y1 with boxes fill pattern 2 lc rgb "red"
 #pause 0.5
 #reread
 

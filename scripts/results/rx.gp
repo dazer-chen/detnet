@@ -27,15 +27,16 @@
 #-------------------------------------
 
 #Happy gnuplotting
-
-set out "rx_detnet.pdf"
+ty=ARG1
+set out "rx_".ty.".pdf"
+#set out "rx_detnet.pdf"
 #set out "rx_fifo.pdf"
-set term pdf font "Times,8"
+set term pdf font "Times,12"
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1300,1000
 
-set pointsize 1.25
+set pointsize 0.75
 
-set key top right
+set key top left
 #set ylabel "Per flow rate [pps]"
 #set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement)\n and the remaining availble bandwidth is fairly shared by other flows."
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
@@ -49,7 +50,7 @@ set xtics 1
 #set y2tics
 #set yrange [0:5]
 #set y2range [0:6000]
-set ylabel "Bitrate Mbps"
+set ylabel "Bitrate (Mbps)"
 #set y2label "Flow Weight"
 #set format y "%.t^.10^%T"
 #set ytics 200000
@@ -64,19 +65,39 @@ set yrange [0:13]
 set ytics 1
 
 plot \
-'< cat rx.dat | tail -n 13'    u ($0):($2)/1000      t 'Rx Other-1'    axes x1y1 with steps lc rgb "green" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($8+10)/1000      t 'Rx Other-2'    axes x1y1 with steps lc rgb "orange" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($5)/1000      t 'Rx Detnet-1'   axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($11)/1000      t 'Rx Detnet-2'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($14)/1000      t 'Rx Detnet-3'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($17)/1000      t 'Rx Detnet-4'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($20)/1000      t 'Rx Detnet-5'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($23)/1000      t 'Rx Detnet-6'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($26)/1000      t 'Rx Detnet-7'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($29)/1000      t 'Rx Detnet-8'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($32)/1000      t 'Rx Detnet-9'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($35)/1000      t 'Rx Detnet-10' axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat rx.dat | tail -n 13'    u ($0):($38)/1000      t 'Rx Total'  axes x1y1 with steps lc rgb "red" lw 2	 
+'< cat rx.dat | tail -n 19'    u ($0+1):($2)/1000     notitle axes x1y1 with steps lc rgb "green" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($5+50)/1000  notitle     axes x1y1 with steps lc rgb "brown" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($8)/1000     notitle  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($11)/1000    notitle   axes x1y1 with steps lc rgb "red" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($14)/1000    notitle   axes x1y1 with steps lc rgb "blue" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($17)/1000    notitle    axes x1y1 with steps lc rgb "orange" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($2)/1000      t 'Rx Other-1'    axes x1y1 with points lc rgb "green" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($5+50)/1000      t 'Rx Other-2'    axes x1y1 with points lc rgb "brown" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($8)/1000      t 'Rx Detnet-1'   axes x1y1 with points lc rgb "black" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($11)/1000      t 'Rx Detnet-2'  axes x1y1 with points lc rgb "red" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($14)/1000      t 'Rx Detnet-3'  axes x1y1 with points lc rgb "blue" lw 2,\
+'< cat rx.dat | tail -n 19'    u ($0+1):($17)/1000      t 'Rx Total'  axes x1y1 with points lc rgb "orange" lw 2
+
+#'< cat rx.dat | tail -n 19'    u ($0+1):($2)/1000      t 'Rx Other-1'    axes x1y1 with lp ls 3 lc rgb "green" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($5+50)/1000      t 'Rx Other-2'    axes x1y1 with lp lc rgb "brown" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($8)/1000      t 'Rx Detnet-1'   axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($11)/1000      t 'Rx Detnet-2'  axes x1y1 with lp lc rgb "red" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($14)/1000      t 'Rx Detnet-3'  axes x1y1 with lp lc rgb "blue" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($17)/1000      t 'Rx Total'  axes x1y1 with lp lc rgb "orange" lw 2
+
+#'< cat rx.dat | tail -n 19'    u ($0+1):($2)/1000      t 'Rx Other-1'    axes x1y1 with lp ls 3 lc rgb "green" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($8+10)/1000      t 'Rx Other-2'    axes x1y1 with lp lc rgb "orange" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($5)/1000      t 'Rx Detnet-1'   axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($11)/1000      t 'Rx Detnet-2'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($14)/1000      t 'Rx Detnet-3'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($17)/1000      t 'Rx Detnet-4'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($20)/1000      t 'Rx Detnet-5'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($23)/1000      t 'Rx Detnet-6'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($26)/1000      t 'Rx Detnet-7'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($29)/1000      t 'Rx Detnet-8'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($32)/1000      t 'Rx Detnet-9'  axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($35)/1000      t 'Rx Detnet-10' axes x1y1 with lp lc rgb "black" lw 2,\
+#'< cat rx.dat | tail -n 19'    u ($0+1):($38)/1000      t 'Rx Total'  axes x1y1 with lp lc rgb "red" lw 2	 
 #pause 0.5
 #reread
 

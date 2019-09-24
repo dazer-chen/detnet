@@ -31,7 +31,7 @@ using namespace ns3;
 #define FIFOQU
 //#define DETNETQU
 
-#define N_FLOWS 12
+#define N_FLOWS 5
 
 NS_LOG_COMPONENT_DEFINE ("detnet");
 FlowMonitorHelper flowHelper;
@@ -45,12 +45,12 @@ void K(){
 	flowmon->ClearFlowStats();
 }
 void F(){
-	std::ofstream outfilerx;
-	outfilerx.open("/home/vamsi/src/detnet/scripts/results/rx.dat", std::ios_base::app);
-	std::ofstream outfilelat;
-	outfilelat.open("/home/vamsi/src/detnet/scripts/results/delay.dat", std::ios_base::app);
-	//std::ofstream outfiletx;
-	//outfiletx.open("/home/vamsi/src/detnet/scripts/results/tx.dat", std::ios_base::app);
+	// std::ofstream outfilerx;
+	// outfilerx.open("/home/vamsi/src/detnet/scripts/results/rx.dat", std::ios_base::app);
+	// std::ofstream outfilelat;
+	// outfilelat.open("/home/vamsi/src/detnet/scripts/results/delay.dat", std::ios_base::app);
+	// std::ofstream outfiletx;
+	// outfiletx.open("/home/vamsi/src/detnet/scripts/results/tx.dat", std::ios_base::app);
 	std::ofstream outfilepkts;
 	outfilepkts.open("/home/vamsi/src/detnet/scripts/results/packets.dat", std::ios_base::app);
 
@@ -58,10 +58,10 @@ void F(){
 	Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowHelper.GetClassifier ());
 	std::map<FlowId, FlowMonitor::FlowStats> stats = flowmon->GetFlowStats ();
 	uint32_t n=0;
-	double total = 0;
-	double total_delay=0;
-	uint32_t total_packets=0;
-	double total_jitter=0;
+	// double total = 0;
+	// double total_delay=0;
+	// uint32_t total_packets=0;
+	// double total_jitter=0;
 	double loss=0;
 
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
@@ -71,52 +71,52 @@ void F(){
 	        //std::cout << "Flow " << i->first  << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\t";
 	        //std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
 	        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
-	        total+=i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000);
-	    	  outfilerx << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (Seconds(0.8).GetSeconds())/(1000)  << " kbps\t";
-	    	  outfilelat << "meandelay: " << (i->second.delaySum.GetSeconds() / i->second.rxPackets) << " sec\t" << "meanJitter: " << (i->second.jitterSum.GetSeconds()/i->second.rxPackets) << " sec\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
-	    	  total_delay+=i->second.delaySum.GetSeconds();
-	    	  total_jitter+=i->second.jitterSum.GetSeconds();
-	    	  total_packets+=i->second.rxPackets;
+	        // total+=i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds() )/(1000);
+	    	  // outfilerx << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds() )/(1000)  << " kbps\t";
+	    	  // outfilelat << "meandelay: " << (i->second.delaySum.GetSeconds() / i->second.rxPackets) << " sec\t" << "meanJitter: " << (i->second.jitterSum.GetSeconds()/i->second.rxPackets) << " sec\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
+	    	  // total_delay+=i->second.delaySum.GetSeconds();
+	    	  // total_jitter+=i->second.jitterSum.GetSeconds();
+	    	  // total_packets+=i->second.rxPackets;
 	    	  loss=(i->second.txPackets - i->second.rxPackets);
-	    	  outfilepkts << "loss: " << loss/i->second.txPackets << "\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
+	    	  outfilepkts << "loss: " << (loss)/(i->second.txPackets) << "\t"; //i->second.delaySum.GetSeconds() / i->second.rxPackets
 	    	  //<< "TX: " << (i->second.txPackets)<< "\t" << "RX: " << (i->second.rxPackets) << "\t" << "LOST: "
 	    	  //std::cout << "  ThroughputTx: " << i->second.txBytes * 8.0 / (i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds())/1000000  << " mbps\t";
 	    }
 	    n++;
 	   }
 	while(n<N_FLOWS){
-		outfilerx << "  ThroughputRx: " << "0"  << " kbps\t";
-		outfilelat << "meandelay: " << 0 << " sec\t" << "meanJitter: " << 0 << " sec\t";
+		//outfilerx << "  ThroughputRx: " << "0"  << " kbps\t";
+		//outfilelat << "meandelay: " << 0 << " sec\t" << "meanJitter: " << 0 << " sec\t";
 		outfilepkts << "0\t";
 	   	n++;
 	}
 
-	outfilerx << "  ThroughputRx: " << total  << " kbps\t";
-	outfilelat << "meanTotaldelay: " << total_delay/total_packets << " sec\t"<< "meanTotalJitter: "<< total_jitter/total_packets << " sec\t";
-	outfilerx << std::endl;
-	outfilelat << std::endl;
+	//outfilerx << "  ThroughputRx: " << total  << " kbps\t";
+	//outfilelat << "meanTotaldelay: " << total_delay/total_packets << " sec\t"<< "meanTotalJitter: "<< total_jitter/total_packets << " sec\t";
+	//outfilerx << std::endl;
+	//outfilelat << std::endl;
 	outfilepkts << std::endl;
-	n=0;
-	total=0;
-	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
-		  {
-			//  Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
-		    {
-		        //std::cout << "Flow " << i->first  << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\t";
-		        //std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
-		        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
-		    	  //std::cout << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds())/1000000  << " mbps\t";
-		    	total+=i->second.txBytes * 8.0 /(Seconds(0.8).GetSeconds())/(1000);
-		    	  //outfiletx << "  ThroughputTx: " << i->second.txBytes * 8.0 /(Seconds(0.8).GetSeconds())/(1000)  << " kbps\t";
-		    }
-		    n++;
-		   }
-	while(n<N_FLOWS){
-	   	//outfiletx << "  ThroughputTx: " << "0"  << " kbps\t";
-	   	n++;
-	}
-	//outfiletx << "  ThroughputTx: " << total  << " kbps\t";
-	//outfiletx << std::endl;
+	// n=0;
+	// total=0;
+	// for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
+	// 	  {
+	// 		//  Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
+	// 	    {
+	// 	        //std::cout << "Flow " << i->first  << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\t";
+	// 	        //std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
+	// 	        //std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
+	// 	    	  //std::cout << "  ThroughputRx: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstRxPacket.GetSeconds())/1000000  << " mbps\t";
+	// 	    	total+=i->second.txBytes * 8.0 / (i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds() )/(1000);
+	// 	    	  outfiletx << "  ThroughputTx: " << i->second.txBytes * 8.0 /(i->second.timeLastTxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds() )/(1000)  << " kbps\t";
+	// 	    }
+	// 	    n++;
+	// 	   }
+	// while(n<N_FLOWS){
+	//    	outfiletx << "  ThroughputTx: " << "0"  << " kbps\t";
+	//    	n++;
+	// }
+	// outfiletx << "  ThroughputTx: " << total  << " kbps\t";
+	// outfiletx << std::endl;
 	//sleep(2);
 
 	//flowmon->ClearFlowStats(); // @suppress("Invalid arguments")
@@ -202,12 +202,12 @@ main (int argc, char *argv[])
 
 	//Type-0
 	PointToPointHelper type0;
-	type0.SetDeviceAttribute("DataRate",StringValue("30Mbps"));
+	type0.SetDeviceAttribute("DataRate",StringValue("40Mbps"));
 	type0.SetChannelAttribute("Delay",StringValue("2ms"));
 
 	//type-1
 	PointToPointHelper type1;
-	type1.SetDeviceAttribute("DataRate",StringValue("12Mbps"));
+	type1.SetDeviceAttribute("DataRate",StringValue("13Mbps"));
 	type1.SetChannelAttribute("Delay",StringValue("2ms"));
 
 	//type-2
@@ -314,102 +314,154 @@ main (int argc, char *argv[])
 	   uint16_t port = 9;   // Discard port (RFC 863)
 	   OnOffHelper onoff ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   OnOffHelper onoff1 ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
-
+	   OnOffHelper onoff2 ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   /*
 	    * ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1000]"));
   m_factory.Set ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
   m_factory.Set ("DataRate", DataRateValue (dataRate));
   m_factory.Set ("PacketSize", UintegerValue (packetSize));
 	    */
-//
-//	   onoff.SetAttribute("PacketSize",UintegerValue(1000));
-//	   onoff.SetAttribute("DataRate", DataRateValue("1Mbps"));
-//	   onoff.SetAttribute("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-//	   onoff.SetAttribute("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.010666667]"));
 
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app0
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   ApplicationContainer apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (2));
-	   apps.Stop (Seconds (18.0));
 
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app1
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (4));
-	   apps.Stop (Seconds (18.0));
+	   onoff.SetConstantRate (DataRate ("1000Kbps"));
+	   onoff1.SetConstantRate (DataRate ("8000Kbps"));
+	   onoff2.SetConstantRate(DataRate("8000Kbps"));
 
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app2
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (5));
-	   apps.Stop (Seconds (18.0));
+	   onoff.SetAttribute("PacketSize",UintegerValue(1000));
+	   // onoff.SetAttribute("DataRate", DataRateValue(DataRate("1Gbps")));
 
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app3
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (6));
-	   apps.Stop (Seconds (18.0));
+	   // onoff.SetAttribute("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.000007451]"));
+	   // onoff.SetAttribute("OffTime", StringValue ("ns3::ExponentialRandomVariable[Mean=0.007629395]"));
 
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app4
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (7));
-	   apps.Stop (Seconds (18.0));
+	   onoff1.SetAttribute("PacketSize",UintegerValue(1000));
+	   // onoff1.SetAttribute("DataRate", DataRateValue(DataRate("1Gbps")));
 
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app5
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
+	   // onoff1.SetAttribute("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.000007451]"));
+	   // onoff1.SetAttribute("OffTime", StringValue ("ns3::ExponentialRandomVariable[Mean=0.000953674]"));
+
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app0
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // ApplicationContainer apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (2));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app1
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (4));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app2
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (5));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app3
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (6));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app4
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (7));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app5
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (8));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app6
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (9));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app7
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (10));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app8
+	   // onoff.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff.Install (c.Get (0));
+	   // apps.Start (Seconds (11));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff2.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   // //onoff.SetConstantRate (DataRate ("1000Kbps")); //app9
+	   // onoff2.SetAttribute("Buffer",StringValue("1200Kbps D")); //12 bytes reserved
+	   // apps = onoff2.Install (c.Get (0));
+	   // apps.Start (Seconds (12));
+	   // apps.Stop (Seconds (18.0));
+
+
+	   // onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
+	   // //onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
+	   // onoff1.SetAttribute("Buffer",StringValue("1000Kbps O")); //12 bytes reserved
+	   // apps = onoff1.Install (c.Get (0));
+	   // apps.Start (Seconds (1));
+	   // apps.Stop (Seconds (18.0));
+
+	   // onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
+	   // //onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
+	   // onoff1.SetAttribute("Buffer",StringValue("1000Kbps O")); //12 bytes reserved
+	   // apps = onoff1.Install (c.Get (0));
+	   // apps.Start (Seconds (3));
+	   // apps.Stop (Seconds (18.0));
+
+	   	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   onoff.SetConstantRate (DataRate ("1000kbps")); //app9
+	   onoff.SetAttribute("Buffer",StringValue("2000kbps D")); //12 bytes reserved
+	   ApplicationContainer apps = onoff.Install (c.Get (0)); /////////////////////////////
+	   //apps = onoff.Install (c.Get (0));
 	   apps.Start (Seconds (8));
 	   apps.Stop (Seconds (18.0));
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app6
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (9));
-	   apps.Stop (Seconds (18.0));
-
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app7
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (10));
-	   apps.Stop (Seconds (18.0));
-
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app8
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
-	   apps = onoff.Install (c.Get (0));
-	   apps.Start (Seconds (11));
-	   apps.Stop (Seconds (18.0));
-
-	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
-	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app9
-	   onoff.SetAttribute("Buffer",StringValue("1100Kbps D")); //12 bytes reserved
+	   onoff.SetConstantRate (DataRate ("5000kbps")); //app9
+	   onoff.SetAttribute("Buffer",StringValue("2000kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
 	   apps.Start (Seconds (12));
 	   apps.Stop (Seconds (18.0));
 
+	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
+	   onoff.SetConstantRate (DataRate ("1500kbps")); //app9
+	   onoff.SetAttribute("Buffer",StringValue("2000kbps D")); //12 bytes reserved
+	   apps = onoff.Install (c.Get (0));
+	   apps.Start (Seconds (16));
+	   apps.Stop (Seconds (18.0));
+
 
 	   onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
-	   onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
-	   onoff1.SetAttribute("Buffer",StringValue("1100Kbps O")); //12 bytes reserved
+	   onoff1.SetConstantRate (DataRate ("10000kbps")); //appOther
+	   onoff1.SetAttribute("Buffer",StringValue("1000kbps O")); //12 bytes reserved
 	   apps = onoff1.Install (c.Get (0));
 	   apps.Start (Seconds (1));
 	   apps.Stop (Seconds (18.0));
 
 	   onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
-	   onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther
-	   onoff1.SetAttribute("Buffer",StringValue("1100Kbps O")); //12 bytes reserved
+	   onoff1.SetConstantRate (DataRate ("10000kbps")); //appOther
+	   onoff1.SetAttribute("Buffer",StringValue("1000kbps O")); //12 bytes reserved
 	   apps = onoff1.Install (c.Get (0));
-	   apps.Start (Seconds (3));
+	   apps.Start (Seconds (5));
 	   apps.Stop (Seconds (18.0));
+
 
 	   // Create a packet sink to receive these packets
 
@@ -417,13 +469,13 @@ main (int argc, char *argv[])
 	                          Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
 	   apps = sink.Install (c.Get (4));
 	   apps.Start (Seconds (1.0));
-	   apps.Stop (Seconds (18.0));
+	   apps.Stop (Seconds (20.0));
 
 	   PacketSinkHelper sink1 ("ns3::UdpSocketFactory",
 	   	                          Address (InetSocketAddress (Ipv4Address::GetAny (), port)));
 	   apps = sink1.Install (c.Get (5));
 	   apps.Start (Seconds (1.0));
-	   apps.Stop (Seconds (18.0));
+	   apps.Stop (Seconds (20.0));
 //////////////////////////////
 
 
@@ -470,30 +522,30 @@ main (int argc, char *argv[])
 
 	   //flowmon->Start(Seconds(4));
 	   //Simulator::Schedule(Seconds (1.1),&K);
-	   Simulator::Schedule(Seconds (1.9),&F);
-	   //Simulator::Schedule(Seconds (2.1),&K);
-	   Simulator::Schedule(Seconds (2.9),&F);
-	   //Simulator::Schedule(Seconds (3.1),&K);
-	   Simulator::Schedule(Seconds (3.9),&F);
-	   //Simulator::Schedule(Seconds (4.1),&K);
-	   Simulator::Schedule(Seconds (4.9),&F);
-	  // Simulator::Schedule(Seconds (5.1),&K);
-	   Simulator::Schedule(Seconds (5.9),&F);
-	   //Simulator::Schedule(Seconds (6.1),&K);
-	   Simulator::Schedule(Seconds (6.9),&F);
-	   //Simulator::Schedule(Seconds (7.1),&K);
-	   Simulator::Schedule(Seconds (7.9),&F);
-	   //Simulator::Schedule(Seconds (8.1),&K);
-	   Simulator::Schedule(Seconds (8.9),&F);
-	   //Simulator::Schedule(Seconds (9.1),&K);
-	   Simulator::Schedule(Seconds (9.9),&F);
-	   //Simulator::Schedule(Seconds (10.1),&K);
-	   Simulator::Schedule(Seconds (10.9),&F);
-	   //Simulator::Schedule(Seconds (11.1),&K);
-	   Simulator::Schedule(Seconds (11.9),&F);
-	   //Simulator::Schedule(Seconds (12.1),&K);
-	   Simulator::Schedule(Seconds (12.9),&F);
-	   //Simulator::Schedule(Seconds (19.1),&K);
+	  //  Simulator::Schedule(Seconds (1.9),&F);
+	  //  //Simulator::Schedule(Seconds (2.1),&K);
+	  //  Simulator::Schedule(Seconds (2.9),&F);
+	  //  //Simulator::Schedule(Seconds (3.1),&K);
+	  //  Simulator::Schedule(Seconds (3.9),&F);
+	  //  //Simulator::Schedule(Seconds (4.1),&K);
+	  //  Simulator::Schedule(Seconds (4.9),&F);
+	  // // Simulator::Schedule(Seconds (5.1),&K);
+	  //  Simulator::Schedule(Seconds (5.9),&F);
+	  //  //Simulator::Schedule(Seconds (6.1),&K);
+	  //  Simulator::Schedule(Seconds (6.9),&F);
+	  //  //Simulator::Schedule(Seconds (7.1),&K);
+	  //  Simulator::Schedule(Seconds (7.9),&F);
+	  //  //Simulator::Schedule(Seconds (8.1),&K);
+	  //  Simulator::Schedule(Seconds (8.9),&F);
+	  //  //Simulator::Schedule(Seconds (9.1),&K);
+	  //  Simulator::Schedule(Seconds (9.9),&F);
+	  //  //Simulator::Schedule(Seconds (10.1),&K);
+	  //  Simulator::Schedule(Seconds (10.9),&F);
+	  //  //Simulator::Schedule(Seconds (11.1),&K);
+	  //  Simulator::Schedule(Seconds (11.9),&F);
+	  //  //Simulator::Schedule(Seconds (12.1),&K);
+	  //  Simulator::Schedule(Seconds (12.9),&F);
+	  //  //Simulator::Schedule(Seconds (19.1),&K);
 	   Simulator::Schedule(Seconds (19.9),&F);
 
 //	   for (uint8_t i=2;i<11;i++){

@@ -333,20 +333,25 @@ FlowMonitor::GetFlowStats () const
 void
 FlowMonitor::ClearFlowStats () {
 	//FlowStatsContainerI iter;
-//	uint32_t s = m_flowStats.size();
-	std::map<FlowId, FlowMonitor::FlowStats> stats = m_flowStats;
-  uint32_t s=1;
-	for (std::map<FlowId, FlowMonitor::FlowStats>::iterator i = m_flowStats.begin (); i != m_flowStats.end (); ++i){
+	uint32_t s = m_flowStats.size();
+	std::map<FlowId, FlowMonitor::FlowStats> stats = GetFlowStats();//m_flowStats;
+  //auto it =stats.begin();
+	for (std::map<FlowId, FlowMonitor::FlowStats>::iterator i = stats.begin (); i != stats.end (); ++i){
 		// i->second.rxBytes=0;
 		// i->second.rxPackets=0;
 		// i->second.txBytes=0;
 		// i->second.txPackets=0;
+    m_flowStats[s].rxBytes=0;
     m_flowStats[s].rxBytes=0;
     m_flowStats[s].rxPackets=1;
     m_flowStats[s].txBytes=0;
     m_flowStats[s].txPackets=1;
     m_flowStats[s].delaySum=Seconds (0);//m_flowStats[s].lastDelay;
     m_flowStats[s].jitterSum = Seconds (0);
+    m_flowStats[s].timeFirstTxPacket=Simulator::Now();
+    m_flowStats[s].timeFirstRxPacket= Simulator::Now();
+
+
     
     //m_flowStats[s].lastDelay = Seconds (0);
 //    m_flowStats[s].delayHistogram.SetDefaultBinWidth (m_delayBinWidth);
@@ -355,7 +360,7 @@ FlowMonitor::ClearFlowStats () {
 //    m_flowStats[s].flowInterruptionsHistogram.SetDefaultBinWidth (m_flowInterruptionsBinWidth);
 		//i->second.timeFirstTxPacket=Simulator::Now();
 		//i->second.timeFirstRxPacket= Simulator::Now();
-s++;
+s--;
 	}
 //	while (s){
 //		m_flowStats[s-1].rxBytes=60;

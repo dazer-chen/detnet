@@ -37,7 +37,7 @@ public:
 		std::string type;
 		uint64_t bwreq;
 		Time last_arrival;
-		uint32_t threshold_flow;
+		uint32_t threshold;
 	}flow_table_t;
 
 	typedef struct detnetactiveflow{
@@ -156,6 +156,7 @@ public:
   uint32_t threshold;
   uint32_t detnet_active;
   uint32_t other_active;
+  uint32_t num;
 
 
 
@@ -187,7 +188,9 @@ private:
   uint32_t nbl_detnet;
   uint32_t nbl_other;
   EventId m_id;                    //!< EventId of the scheduled queue waking event when enough tokens are available
-#define TABLESIZE 1024
+  uint32_t batch;
+  uint32_t detnet_consumption;
+  #define TABLESIZE 1024
 #define DETNET 0
 #define OTHER 1
   std::vector<flow_table_t>flow_table[TABLESIZE];

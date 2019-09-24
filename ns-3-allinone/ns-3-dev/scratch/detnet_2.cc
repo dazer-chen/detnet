@@ -31,7 +31,7 @@ using namespace ns3;
 //#define FIFOQU
 #define DETNETQU
 
-#define N_FLOWS 12
+#define N_FLOWS 4
 
 NS_LOG_COMPONENT_DEFINE ("detnet");
 FlowMonitorHelper flowHelper;
@@ -306,6 +306,8 @@ main (int argc, char *argv[])
 	   uint16_t port = 9;   // Discard port (RFC 863)
 	   OnOffHelper onoff ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   OnOffHelper onoff1 ("ns3::UdpSocketFactory",Address (InetSocketAddress (i4i3.GetAddress (0), port)));
+	   onoff.SetAttribute("PacketSize",UintegerValue(1000));
+	   onoff1.SetAttribute("PacketSize",UintegerValue(1000));
 
 	   /*
 	    * ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1000]"));
@@ -383,11 +385,10 @@ main (int argc, char *argv[])
 
 	   onoff.SetAttribute ("Remote",AddressValue (InetSocketAddress (i5i3.GetAddress (0), port)));
 	   onoff.SetConstantRate (DataRate ("1000Kbps")); //app9
-	   onoff.SetAttribute("Buffer",StringValue("1000Kbps D")); //12 bytes reserved
+	   onoff.SetAttribute("Buffer",StringValue("4000Kbps D")); //12 bytes reserved
 	   apps = onoff.Install (c.Get (0));
 	   apps.Start (Seconds (12));
 	   apps.Stop (Seconds (20.0));
-
 
 	   onoff1.SetAttribute ("Remote",AddressValue (InetSocketAddress (i4i3.GetAddress (0), port)));
 	   onoff1.SetConstantRate (DataRate ("8000Kbps")); //appOther

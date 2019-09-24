@@ -1,0 +1,17 @@
+bwresv 20 500 Destination-ip: 167838721	ThroughputRx: 506.188 kbps	ThroughputRxPps: 0.0615501 kpps 0
+bwresv 20 1000 Destination-ip: 167838721	ThroughputRx: 1010.56 kbps	ThroughputRxPps: 0.12288 kpps 0
+bwresv 20 1500 Destination-ip: 167838721	ThroughputRx: 1487.19 kbps	ThroughputRxPps: 0.180835 kpps 0
+bwresv 20 2000 Destination-ip: 167838721	ThroughputRx: 1986.26 kbps	ThroughputRxPps: 0.24152 kpps 0
+bwresv 20 2500 Destination-ip: 167838721	ThroughputRx: 2454.94 kbps	ThroughputRxPps: 0.298509 kpps 0
+bwresv 20 3000 Destination-ip: 167838721	ThroughputRx: 2964.78 kbps	ThroughputRxPps: 0.360504 kpps 0
+bwresv 20 3500 Destination-ip: 167838721	ThroughputRx: 3451.19 kbps	ThroughputRxPps: 0.419648 kpps 0
+bwresv 20 4000 Destination-ip: 167838721	ThroughputRx: 3964.32 kbps	ThroughputRxPps: 0.482043 kpps 0
+bwresv 20 4500 Destination-ip: 167838721	ThroughputRx: 4451.82 kbps	ThroughputRxPps: 0.54132 kpps 0
+bwresv 20 5000 Destination-ip: 167838721	ThroughputRx: 4888.37 kbps	ThroughputRxPps: 0.594403 kpps 0.0101692
+bwresv 20 5500 Destination-ip: 167838721	ThroughputRx: 4982.93 kbps	ThroughputRxPps: 0.605901 kpps 0.0824596
+bwresv 20 6000 Destination-ip: 167838721	ThroughputRx: 4982.42 kbps	ThroughputRxPps: 0.605839 kpps 0.16038
+bwresv 20 6500 Destination-ip: 167838721	ThroughputRx: 4982.75 kbps	ThroughputRxPps: 0.60588 kpps 0.226449
+bwresv 20 7000 Destination-ip: 167838721	ThroughputRx: 4982.57 kbps	ThroughputRxPps: 0.605858 kpps 0.28211
+bwresv 20 7500 Destination-ip: 167838721	ThroughputRx: 4982.6 kbps	ThroughputRxPps: 0.605861 kpps 0.329873
+bwresv 20 8000 Destination-ip: 167838721	ThroughputRx: 4981.85 kbps	ThroughputRxPps: 0.60577 kpps 0.372189
+bwresv 20 8500 Destination-ip: 167838721	ThroughputRx: 4981.82 kbps	ThroughputRxPps: 0.605766 kpps 0.409501

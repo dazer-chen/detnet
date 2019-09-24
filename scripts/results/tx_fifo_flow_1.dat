@@ -1,0 +1,17 @@
+fifo 500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0
+fifo 1000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.0241522
+fifo 1500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.0942561
+fifo 2000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.165052
+fifo 2500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.215848
+fifo 3000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.264429
+fifo 3500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.310311
+fifo 4000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.347889
+fifo 4500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.381592
+fifo 5000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.416678
+fifo 5500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.446851
+fifo 6000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.47218
+fifo 6500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.498131
+fifo 7000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.529689
+fifo 7500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.550311
+fifo 8000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.574187
+fifo 8500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.584567

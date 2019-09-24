@@ -28,14 +28,16 @@
 
 #Happy gnuplotting
 
-set out "pkt_detnet.pdf"
+#ty=ARG1
+set out "pkt_all.pdf"
+#set out "pkt_all.pdf"
 #set out "pkt_fifo.pdf"
-set term pdf font "Times,8"
+set term pdf font "Times,12"
 
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1200,1000
 
-set pointsize 1.25
-set key top right
+set pointsize 0.5
+set key top left
 
 #set ylabel "Per flow rate [pps]"
 #set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
@@ -72,7 +74,27 @@ set ylabel "Number of packets in the queue"
 set yrange [0:1200]
 
 plot \
-'< cat pkt.dat' u ($2):($1) t 'packets' axes x1y1 with lp
+'< cat pkt_detnet_10.dat '   every 1000::0  u ($2):($1)     notitle  axes x1y1 with steps lc rgb "blue" lw 2,\
+'< cat pkt_fifo.dat '    	 every 1000::0	u ($2):($1)     notitle  axes x1y1 with steps lc rgb "red" lw 2,\
+'< cat pkt_detnet_10.dat '   every 1000::0  u ($2):($1)     t 'BwResv Th=10'  axes x1y1 with points lc rgb "blue" lw 2,\
+'< cat pkt_fifo.dat '    	 every 1000::0	u ($2):($1)     t 'Fifo'  axes x1y1 with points lc rgb "red" lw 2,\
+'< cat pkt_detnet_20.dat '   every 1000::0  u ($2):($1)      notitle  axes x1y1 with steps lc rgb "brown" lw 2,\
+'< cat pkt_detnet_20.dat '   every 1000::0  u ($2):($1)     t 'BwResv Th=20'  axes x1y1 with points lc rgb "brown" lw 2,\
+'< cat pkt_detnet_40.dat '   every 1000::0  u ($2):($1)      notitle  axes x1y1 with steps lc rgb "orange" lw 2,\
+'< cat pkt_detnet_40.dat '   every 1000::0  u ($2):($1)     t 'BwResv Th=40'  axes x1y1 with points lc rgb "orange" lw 2,\
+'< cat pkt_detnet_80.dat '   every 1000::0  u ($2):($1)      notitle  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat pkt_detnet_80.dat '   every 1000::0  u ($2):($1)     t 'BwResv Th=80'  axes x1y1 with points lc rgb "black" lw 2
+
+
+#'< cat pkt_p10.dat' every 1000::0 u ($2):($1) t 'BWresv Poisson,Th=10Mtu' axes x1y1 with lp,\
+#'< cat pkt_c10.dat' every 1000::0 u ($2):($1) t 'BWresv Cbr,Th=10Mtu' axes x1y1 with lp,\
+#'< cat pkt_p20.dat' every 1000::0 u ($2):($1) t 'BWresv Poisson Th=20Mtu' axes x1y1 with lp,\
+#'< cat pkt_p40.dat' every 1000::0 u ($2):($1) t 'BWresv Poisson Th=40Mtu' axes x1y1 with lp,\
+#'< cat pkt_p60.dat' every 1000::0 u ($2):($1) t 'BWresv Poisson Th=60Mtu' axes x1y1 with lp,\
+#'< cat pkt_pf60.dat' every 1000::0 u ($2):($1) t 'FIFO Poisson' axes x1y1 with lp,\
+#'< cat pkt_cf60.dat' every 1000::0 u ($2):($1) t 'FIFO Cbr' axes x1y1 with lp,\
+#'< cat pkt_c60.dat' every 1000::0 u ($2):($1) t 'BWresv Cbr Th=60Mtu' axes x1y1 with lp
+
 #pause 0.5
 #reread
 

@@ -1,0 +1,13 @@
+bwresv 1 4500 Destination-ip: 167840257	ThroughputRx: 4135.24 kbps	ThroughputRxPps: 0.502826 kpps 0.0829488
+bwresv 2 4500 Destination-ip: 167840257	ThroughputRx: 4340.61 kbps	ThroughputRxPps: 0.527798 kpps 0.0373431
+bwresv 3 4500 Destination-ip: 167840257	ThroughputRx: 4422.94 kbps	ThroughputRxPps: 0.537809 kpps 0.0189935
+bwresv 4 4500 Destination-ip: 167840257	ThroughputRx: 4465.24 kbps	ThroughputRxPps: 0.542953 kpps 0.00955038
+bwresv 5 4500 Destination-ip: 167840257	ThroughputRx: 4486.26 kbps	ThroughputRxPps: 0.545508 kpps 0.00482884
+bwresv 10 4500 Destination-ip: 167840257	ThroughputRx: 4506.53 kbps	ThroughputRxPps: 0.547972 kpps 0
+bwresv 20 4500 Destination-ip: 167840257	ThroughputRx: 4503.93 kbps	ThroughputRxPps: 0.547657 kpps 0
+bwresv 40 4500 Destination-ip: 167840257	ThroughputRx: 4498.49 kbps	ThroughputRxPps: 0.546995 kpps 0
+bwresv 80 4500 Destination-ip: 167840257	ThroughputRx: 4487.64 kbps	ThroughputRxPps: 0.545676 kpps 0
+bwresv 160 4500 Destination-ip: 167840257	ThroughputRx: 4466.09 kbps	ThroughputRxPps: 0.543055 kpps 0
+bwresv 320 4500 Destination-ip: 167840257	ThroughputRx: 4423.6 kbps	ThroughputRxPps: 0.53789 kpps 0
+bwresv 640 4500 Destination-ip: 167840257	ThroughputRx: 4346.13 kbps	ThroughputRxPps: 0.528469 kpps 0.00472154
+bwresv 960 4500 Destination-ip: 167840257	ThroughputRx: 4294.12 kbps	ThroughputRxPps: 0.522145 kpps 0.0166327

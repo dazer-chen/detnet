@@ -1,0 +1,7 @@
+
+Flow-id: 1	meandelay: 0.297587 sec	meanJitter: 0.000141248 sec
+Flow-id: 2	meandelay: 0.297283 sec	meanJitter: 0.000171704 sec
+Flow-id: 3	meandelay: 0.297393 sec	meanJitter: 0.000150588 sec
+Flow-id: 4	meandelay: 0.297449 sec	meanJitter: 0.000186549 sec
+Flow-id: 5	meandelay: 0.296799 sec	meanJitter: 0.000151868 sec
+Flow-id: All	meanTotaldelay: 0.297384 sec	meanTotalJitter: 0.000160396 sec

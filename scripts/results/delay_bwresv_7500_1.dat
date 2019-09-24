@@ -1,0 +1,6 @@
+Destination-ip: 167838465	meandelay: 0.00964557 sec	meanJitter: 0.000509141 sec
+Destination-ip: 167840769	meandelay: 0.00925926 sec	meanJitter: 0.000651042 sec
+Destination-ip: 167838721	meandelay: 0.00965014 sec	meanJitter: 0.000500707 sec
+Destination-ip: 167840257	meandelay: 0.00965265 sec	meanJitter: 0.000500837 sec
+Destination-ip: 167840513	meandelay: 0.0092548 sec	meanJitter: 0.000661804 sec
+Destination-ip: All	meanTotaldelay: 0.0096086 sec	meanTotalJitter: 0.000519478 sec

@@ -30,6 +30,7 @@
 #include <fstream>
 #include <string>
 
+#define PACKETSFIFO 0
 
 namespace ns3 {
 
@@ -69,6 +70,7 @@ FifoQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 {
   NS_LOG_FUNCTION (this << item);
 
+
   if (GetCurrentSize () + item > GetMaxSize ())
     {
       NS_LOG_LOGIC ("Queue full -- dropping pkt");
@@ -91,10 +93,27 @@ Ptr<QueueDiscItem>
 FifoQueueDisc::DoDequeue (void)
 {
   NS_LOG_FUNCTION (this);
-  std::ofstream outfilepkt;
 
-  outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
-  outfilepkt<< GetInternalQueue (0)->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() <<std::endl;
+  if (PACKETSFIFO==1){
+     std::ofstream outfilepkt;
+     outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+     outfilepkt<< GetCurrentSize ()<< "\t" << Simulator::Now().GetSeconds()  <<std::endl;
+    }
+
+//  std::ofstream outfilepkt;
+//  std::ofstream outfiletime;
+
+//  uint64_t ti = Simulator::Now ().GetNanoSeconds();
+//  if (timenow == 0)timenow = ti;
+
+//  std::ofstream outfilepkt;
+//  outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+//  outfilepkt<< GetInternalQueue (0)->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() <<std::endl;
+
+//  outfiletime.open("/home/vamsi/src/detnet/scripts/results/time.dat",std::ios_base::app);
+//  outfiletime << ti-timenow << std::endl;
+//  timenow = ti;
+
 
   Ptr<QueueDiscItem> item = GetInternalQueue (0)->Dequeue ();
 

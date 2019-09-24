@@ -1,0 +1,17 @@
+fifo 500 Destination-ip: 167840257	ThroughputRx: 489.689 kbps	ThroughputRxPps: 0.0595439 kpps 0
+fifo 1000 Destination-ip: 167840257	ThroughputRx: 928.921 kbps	ThroughputRxPps: 0.112952 kpps 0.0345835
+fifo 1500 Destination-ip: 167840257	ThroughputRx: 1270.28 kbps	ThroughputRxPps: 0.15446 kpps 0.127132
+fifo 2000 Destination-ip: 167840257	ThroughputRx: 1558.38 kbps	ThroughputRxPps: 0.189492 kpps 0.196424
+fifo 2500 Destination-ip: 167840257	ThroughputRx: 1824.18 kbps	ThroughputRxPps: 0.221812 kpps 0.247488
+fifo 3000 Destination-ip: 167840257	ThroughputRx: 2030.14 kbps	ThroughputRxPps: 0.246855 kpps 0.302879
+fifo 3500 Destination-ip: 167840257	ThroughputRx: 2238.65 kbps	ThroughputRxPps: 0.272209 kpps 0.342551
+fifo 4000 Destination-ip: 167840257	ThroughputRx: 2433.13 kbps	ThroughputRxPps: 0.295857 kpps 0.373825
+fifo 4500 Destination-ip: 167840257	ThroughputRx: 2583.2 kbps	ThroughputRxPps: 0.314105 kpps 0.408091
+fifo 5000 Destination-ip: 167840257	ThroughputRx: 2766.11 kbps	ThroughputRxPps: 0.336346 kpps 0.431556
+fifo 5500 Destination-ip: 167840257	ThroughputRx: 2839.7 kbps	ThroughputRxPps: 0.345294 kpps 0.468438
+fifo 6000 Destination-ip: 167840257	ThroughputRx: 3010.54 kbps	ThroughputRxPps: 0.366068 kpps 0.482153
+fifo 6500 Destination-ip: 167840257	ThroughputRx: 3106.97 kbps	ThroughputRxPps: 0.377793 kpps 0.506141
+fifo 7000 Destination-ip: 167840257	ThroughputRx: 3207.18 kbps	ThroughputRxPps: 0.389978 kpps 0.525561
+fifo 7500 Destination-ip: 167840257	ThroughputRx: 3296.15 kbps	ThroughputRxPps: 0.400796 kpps 0.544018
+fifo 8000 Destination-ip: 167840257	ThroughputRx: 3409.47 kbps	ThroughputRxPps: 0.414576 kpps 0.558834
+fifo 8500 Destination-ip: 167840257	ThroughputRx: 3424.36 kbps	ThroughputRxPps: 0.416386 kpps 0.582782

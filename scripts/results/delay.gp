@@ -28,14 +28,16 @@
 
 #Happy gnuplotting
 
-set out "delay_detnet.pdf"
+#ty=ARG1
+set out "delay_all.pdf"
+#set out "delay_detnet.pdf"
 #set out "delay_fifo.pdf"
-set term pdf font "Times,8"
+set term pdf font "Times,12"
 #set terminal X11 enhanced font "courier 10 pitch, 16" size 1200,1000
 
-set pointsize 1.25
+set pointsize 0.75
 
-set key top right
+set key top left
 #set ylabel "Per flow rate [pps]"
 #set title "Priority Bandwidth reservation Output (21Mbps Input link and 10Mbps Output link)\nPriority Bandwidth Sharing\n10 Detnet Flows and 2 Other heavy flows\nExplicit Bandwidth Reservation for Detnet Flows (Flows send their bandwidth requirement) \n and the remaining availble bandwidth is fairly shared by other flows."
 #set title "Fifo Queue Output (21Mbps Input link and 10Mbps Output link)\n10 Detnet Flows and 2 Other heavy flows"
@@ -49,7 +51,7 @@ set xtics 1
 #set y2tics
 #set yrange [0:5]
 #set y2range [0:6000]
-set ylabel "Mean latency (Secs)"
+set ylabel "Average end-to-end delay (Secs)"
 #set y2label "Flow Weight"
 #set format y "%.t^.10^%T"
 #set ytics 200000
@@ -64,20 +66,33 @@ set ylabel "Mean latency (Secs)"
 #set ytics 1
 set yrange [0:0.5]
 
+#t=ARG1
+
 plot \
-'< cat delay.dat | tail -n 13'    u ($0):($2)      t 'Latency Other-1'    axes x1y1 with steps lc rgb "green" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($14)      t 'Latency Other-2'    axes x1y1 with steps lc rgb "orange" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($8)      t 'Latency Detnet-1'   axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($20)     t 'Latency Detnet-2'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($26)     t 'Latency Detnet-3'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($32)     t 'Latency Detnet-4'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($38)     t 'Latency Detnet-5'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($44)     t 'Latency Detnet-6'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($50)     t 'Latency Detnet-7'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($56)     t 'Latency Detnet-8'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($62)     t 'Latency Detnet-9'  axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($68)     t 'Latency Detnet-10' axes x1y1 with steps lc rgb "black" lw 2,\
-'< cat delay.dat | tail -n 13'    u ($0):($74)     t 'Total Mean Latency' axes x1y1 with steps lc rgb "red" lw 2
+'< cat delay_detnet_10.dat '    u ($0+1):($32)     notitle  axes x1y1 with steps lc rgb "blue" lw 2,\
+'< cat delay_fifo.dat '    u ($0+1):($32)     notitle  axes x1y1 with steps lc rgb "red" lw 2,\
+'< cat delay_detnet_10.dat '    u ($0+1):($32)     t 'BwResv Th=10'  axes x1y1 with points lc rgb "blue" lw 2,\
+'< cat delay_fifo.dat '    u ($0+1):($32)     t 'Fifo'  axes x1y1 with points lc rgb "red" lw 2,\
+'< cat delay_detnet_20.dat '    u ($0+1):($32)      notitle  axes x1y1 with steps lc rgb "brown" lw 2,\
+'< cat delay_detnet_20.dat '    u ($0+1):($32)     t 'BwResv Th=20'  axes x1y1 with points lc rgb "brown" lw 2,\
+'< cat delay_detnet_40.dat '    u ($0+1):($32)      notitle  axes x1y1 with steps lc rgb "orange" lw 2,\
+'< cat delay_detnet_40.dat '    u ($0+1):($32)     t 'BwResv Th=40'  axes x1y1 with points lc rgb "orange" lw 2,\
+'< cat delay_detnet_80.dat '    u ($0+1):($32)      notitle  axes x1y1 with steps lc rgb "black" lw 2,\
+'< cat delay_detnet_80.dat '    u ($0+1):($32)     t 'BwResv Th=80'  axes x1y1 with points lc rgb "black" lw 2
+
+#'< cat delay.dat '    u ($0):($2)      t 'Latency Other-1'    axes x1y1 with steps lc rgb "green" lw 2,\
+#'< cat delay.dat '    u ($0):($14)      t 'Latency Other-2'    axes x1y1 with steps lc rgb "orange" lw 2,\
+#'< cat delay.dat '    u ($0):($8)      t 'Latency Detnet-1'   axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($20)     t 'Latency Detnet-2'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($26)     t 'Latency Detnet-3'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($32)     t 'Latency Detnet-4'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($38)     t 'Latency Detnet-5'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($44)     t 'Latency Detnet-6'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($50)     t 'Latency Detnet-7'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($56)     t 'Latency Detnet-8'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($62)     t 'Latency Detnet-9'  axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($68)     t 'Latency Detnet-10' axes x1y1 with steps lc rgb "black" lw 2,\
+#'< cat delay.dat '    u ($0):($74)     t 'Total Mean Latency' axes x1y1 with steps lc rgb "red" lw 2
 #pause 0.5
 #reread
 

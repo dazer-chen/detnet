@@ -24,10 +24,14 @@
 #include "ns3/udp-header.h"
 #include "ns3/ipv4-queue-disc-item.h"
 
+#define PACKETSDETNET 1
 
 #include <iostream>
 #include <fstream>
 #include <string>
+
+
+// #include <unistd.h>
 
 //#include "ns3/ipv4-queue-disc-item.h"
 
@@ -232,7 +236,10 @@ BwResvQueueDisc::ClassifyFlow(Ptr<QueueDiscItem> item,uint32_t hash,uint32_t pkt
 	//std::string type = std::string(buffer+c->GetSize()-2, buffer+c->GetSize()-1);
 	flow->bwreq=flow_bwreq;
 	flow->type=type;
-	flow->threshold_flow=1500*8;
+	if(flow->type=="D")
+	flow->threshold=threshold;
+	else
+		flow->threshold=threshold;
 	//flow->last_arrival=Simulator::Now ();
 	flow_table[mod].push_back(*flow);
 	return flow;
@@ -244,44 +251,73 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
   NS_LOG_FUNCTION (this << item);
 
   Time now = Simulator::Now ();
+//  usleep(2*1e3);
+
+   // outfilerx << (now-m_timeCheckPoint_detnet).GetNanoSeconds() <<"\t"<< now.GetSeconds() << std::endl;
+  // m_timeCheckPoint_detnet=now;
   //bool retval = GetQueueDiscClass (0)->GetQueueDisc ()->Enqueue (item);
   //return retval;
-  double delta = (now  - m_timeCheckPoint).GetSeconds ();
-  m_timeCheckPoint=now;
+
   uint32_t hash = item->Hash ();
   flow_table_t *flow;
   uint32_t pktsize = (item->GetSize ()+2)*8;
-  //std::cout << pktsize << std::endl;
+//  std::cout << detnetactiveflows.size()<< std::endl;
 
+/*
+*******************************MFD ALGORITHM************************************
+*/
+
+
+  /* 
+  Flow Classification
+  */
   flow = ClassifyFlow(item,hash,pktsize);
 
-////////////Priority bandwidth reservation with multiple detnet flows//////////////
 
-  //Overall bandwidth usage priority
-  uint32_t credit = (m_ratedetnet.GetBitRate ()*delta);
-  uint32_t detnet_consumption=0;
+//  uint32_t detnet_consumption=0;
   //std::cout<< detnetactiveflows.size() << "\t"<< otheractiveflows.size()<< std::endl;
 
-  if(detnetactiveflows.size() > 0){
-	  for(uint32_t i=0;i<detnetactiveflows.size();i++){
-		  detnetactiveflow_t d_flow = RemoveDetnetActiveFlow();
-		  flow_table_t *flow = d_flow.flow;
-		  double delta1 = (now  - flow->last_arrival).GetSeconds ();
-		  flow->last_arrival=now;
-		  uint32_t req  = (flow->bwreq*delta1);
-		  //std::cout << req << delta<< "\t"<< flow->vqueue <<  std::endl;
-		  if(flow->vqueue > req){
-			  flow->vqueue-=req;
-			  detnet_consumption+=req;
-			  AddDetnetActiveFlow(d_flow);
-		  }
-		  else{
-			  detnet_consumption+=flow->vqueue;
-			  flow->vqueue=0;
-		  }
-	  }
-  }
-  if(credit > detnet_consumption && otheractiveflows.size() > 0){
+//    batch++;
+    
+    /* 
+    Loop which allocates reserved bandwidth for PRIORITY flows 
+    */
+
+    if(detnetactiveflows.size() > 0){
+		  //	  m_timeCheckPoint=now;
+      for(uint32_t i=0;i<detnetactiveflows.size();i++){
+        detnetactiveflow_t d_flow = RemoveDetnetActiveFlow();
+		    flow_table_t *flow = d_flow.flow;
+		    double delta1 = (now  - flow->last_arrival).GetSeconds ();
+		    flow->last_arrival=now;
+        // m_timeCheckPoint=now;
+		    uint32_t req  = (flow->bwreq*delta1);
+		    //std::cout << req << delta<< "\t"<< flow->vqueue <<  std::endl;
+		    if(flow->vqueue > req){
+          flow->vqueue-=req;
+          detnet_consumption+=req;
+          AddDetnetActiveFlow(d_flow);
+        }
+		    else{
+          detnet_consumption+=flow->vqueue;
+          flow->vqueue=0;
+        }
+      }
+    }
+    if (batch==0){
+    /*
+    Credit is the total available bandwidth to be used (in bits)
+    */
+    double delta = (now  - m_timeCheckPoint).GetSeconds ();
+    uint32_t credit = (m_ratedetnet.GetBitRate ()*delta);
+//    m_timeCheckPoint=now;
+
+    /* 
+    Loop which allocates remaining unused bandwidth for NON-PRIORITY flows 
+    */
+
+    if(credit > detnet_consumption && otheractiveflows.size() > 0){
+     m_timeCheckPoint=now;
 	  flow_table_t *flow;
 	  otheractiveflow_t o_flow;
 	  float rem_credit=credit-detnet_consumption;
@@ -289,34 +325,33 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 	  uint32_t old_nbl=otheractiveflows.size()+1;
 	  //std::cout << otheractiveflows.size()<<std::endl;
 	  while(old_nbl>otheractiveflows.size() && otheractiveflows.size()>0){
-		  old_nbl=otheractiveflows.size();
-		  served = rem_credit/old_nbl;
-		  rem_credit=0;
-		  for (uint32_t i=0;i<old_nbl;i++){
-			  o_flow = RemoveOtherActiveFlow();
-			  flow=o_flow.flow;
-			  if(flow->vqueue > served){
-				  flow->vqueue -= served;
-				  AddOtherActiveFlow(o_flow);
-			  }
-			  else{
-				  rem_credit+=served-flow->vqueue;
-				  flow->vqueue=0;
-			  }
-		  }
-
-	  }
+      old_nbl=otheractiveflows.size();
+      served = rem_credit/old_nbl;
+      rem_credit=0;
+      for (uint32_t i=0;i<old_nbl;i++){
+        o_flow = RemoveOtherActiveFlow();
+        flow=o_flow.flow;
+        if(flow->vqueue > served){
+          flow->vqueue -= served;
+          AddOtherActiveFlow(o_flow);
+        }
+        else{
+          rem_credit+=served-flow->vqueue;
+      	  flow->vqueue=0;
+        }
+      }
+    }
+	  detnet_consumption=0;
   }
+  batch=0;
+
+}
+
 
 
 
 // Packet Accepted or Dropped
-  uint32_t t;
- // if(flow->type=="D")
-	//   t=flow->threshold_flow;
- // else
-	  t=threshold;
-  if(flow->vqueue <=t){
+  if(flow->vqueue <=flow->threshold){
 	  if(flow->vqueue == 0){
 		  if(flow->type=="D"){
 			  nbl_detnet++;
@@ -333,14 +368,14 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 		  }
 	  }
 	  flow->vqueue+=pktsize;
-	  //flow->last_arrival=now;
+//	  flow->last_arrival=now;
 	  //std::cout << flow.vqueue <<  std::endl;
-	  flow->last_arrival=Simulator::Now ();
+//	  flow->last_arrival=Simulator::Now ();
+//	  m_timeCheckPoint=now;
 	  // if(flow->type=="D")
 	  // flow->threshold_flow=flow->threshold_flow*1.1;
 	  // else
 		 //  threshold=threshold*1.1;
-
   }
   else{
 	  DropBeforeEnqueue (item, FORCED_DROP);
@@ -350,6 +385,8 @@ BwResvQueueDisc::DoEnqueue (Ptr<QueueDiscItem> item)
 		 //  threshold=threshold*0.5;
 	  return false;
   }
+
+
 
   bool retval = GetQueueDiscClass (0)->GetQueueDisc ()->Enqueue (item);
   
@@ -366,19 +403,37 @@ Ptr<QueueDiscItem>
 BwResvQueueDisc::DoDequeue (void)
 {
   NS_LOG_FUNCTION (this);
+
+  if (PACKETSDETNET==1){
+     std::ofstream outfilepkt;
+     outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+     outfilepkt<< GetQueueDiscClass(0)->GetQueueDisc()->GetNPackets()<< "\t" << Simulator::Now().GetSeconds()  <<std::endl;
+    }
+
   //Ptr<const QueueDiscItem> itemPeek = GetQueueDiscClass (0)->GetQueueDisc ()->Peek ();
 
 //  if (GetQueueDiscClass (0)->GetQueueDisc ()-> IsEmpty () )
 //	  return 0;
 //  else{
 
-    std::ofstream outfilepkt;
-
+//    std::ofstream outfilepkt;
 
 
   	  Ptr<QueueDiscItem> item = GetQueueDiscClass (0)->GetQueueDisc ()->Dequeue ();
-  	 outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
-  	  outfilepkt<< GetQueueDiscClass(0)->GetQueueDisc()->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() <<std::endl;
+ 	//uint32_t s = GetQueueDiscClass (0)->GetQueueDisc ()->GetNPackets();
+  	// if(s>=40){
+  	// 	threshold=threshold*0.9;
+  	// }
+  	// else if ( s>=5 ){
+   //    if(num==100){
+  	// 	  threshold+=1000*8;
+   //      num=0;
+   //    }
+   //    else
+   //      num++;
+  	// }
+//  	 outfilepkt.open("/home/vamsi/src/detnet/scripts/results/pkt.dat", std::ios_base::app);
+//  	  outfilepkt<< GetQueueDiscClass(0)->GetQueueDisc()->GetNPackets()<< "\t" << Simulator::Now().GetSeconds() << "\t" << threshold/(1000*8) <<std::endl;
 	  //if(item!= NULL )
 	  return item;
 	  //else return 0;
@@ -542,11 +597,11 @@ BwResvQueueDisc::InitializeParams (void)
   m_timeCheckPoint_other = Seconds (0);
   m_timeCheckPoint = Seconds (0);
   m_id = EventId ();
-  threshold=1500*15;
+  uint32_t z = 960;
+  threshold=1030*8*z;
   nbl_detnet=0;
   nbl_other=0;
+  num=0;
 }
 
 } // namespace ns3
-
-

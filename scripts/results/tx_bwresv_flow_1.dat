@@ -1,0 +1,17 @@
+bwresv 500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.00698962
+bwresv 1000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.0732872
+bwresv 1500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.176332
+bwresv 2000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.28346
+bwresv 2500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.387682
+bwresv 3000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.496471
+bwresv 3500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.601453
+bwresv 4000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.709204
+bwresv 4500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.815087
+bwresv 5000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.898339
+bwresv 5500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.924844
+bwresv 6000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927266
+bwresv 6500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927405
+bwresv 7000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927336
+bwresv 7500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927405
+bwresv 8000 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927336
+bwresv 8500 Destination-ip: 167840769	ThroughputTx: 6990.93 kbps 0.927266

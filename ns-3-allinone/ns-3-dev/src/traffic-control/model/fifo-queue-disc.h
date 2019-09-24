@@ -56,6 +56,7 @@ private:
   virtual Ptr<const QueueDiscItem> DoPeek (void);
   virtual bool CheckConfig (void);
   virtual void InitializeParams (void);
+  uint64_t timenow;
 };
 
 } // namespace ns3
